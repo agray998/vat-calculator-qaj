@@ -3,6 +3,8 @@ pipeline {
     
     environment {
         DEPLOY = "false"
+        registry = "vat-calculator"
+        dockerImage = ""
     }
 
     stages {
@@ -18,17 +20,30 @@ pipeline {
               npm 'test'
            }
         }
-        stage('Build Webpack') {
-            steps {
-                npm 'run build'
+        stage ('Docker Build') {
+          steps {
+            script {
+              dockerImage = docker.build(registry)
+              dockerImage.tag("${env.BUILD_NUMBER}")
             }
+          }
         }
-        stage('Archive') {
-            steps {
-              sh 'tar -czf build.tar.gz build'
-              archiveArtifacts 'build.tar.gz'
-            }
+        stage('Scan Image') {
+          steps {
+            grypeScan scanDest: "docker:${registry}:${BUILD_NUMBER}", repName: 'scanResult.txt', autoInstall:true
+          }
         }
+        // stage('Build Webpack') {
+        //     steps {
+        //         npm 'run build'
+        //     }
+        // }
+        // stage('Archive') {
+        //     steps {
+        //       sh 'tar -czf build.tar.gz build'
+        //       archiveArtifacts 'build.tar.gz'
+        //     }
+        // }
         stage('Deploy') {
             when {
                 environment name: "DEPLOY", value: "true"
