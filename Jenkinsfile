@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     environment {
-        DEPLOY = "false"
+        DEPLOY = "true"
         registry = "vat-calculator"
         dockerImage = ""
     }
