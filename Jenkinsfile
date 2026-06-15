@@ -58,4 +58,16 @@ pipeline {
             }
         }
     }
+    post {
+        always {
+            recordIssues(
+                qualityGates: [
+                    [criticality: 'FAILURE', integerThreshold: 30, threshold: 30.0, type: 'TOTAL_HIGH'], 
+                    [criticality: 'FAILURE', integerThreshold: 5, threshold: 5.0, type: 'NEW']
+                    ], 
+                    sourceCodeRetention: 'LAST_BUILD', 
+                    tools: [grype()]
+            )
+        }
+    }
 }
