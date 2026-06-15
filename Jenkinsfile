@@ -14,13 +14,13 @@ pipeline {
         // }
         stage('Run Tests') {
             steps {
-              sh 'npm install'
-              sh 'CI=true npm test'
+              npm 'install'
+              npm 'test'
            }
         }
         stage('Build Webpack') {
             steps {
-                sh 'npm run build'
+                npm 'run build'
             }
         }
         stage('Archive') {
