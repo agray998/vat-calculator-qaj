@@ -50,7 +50,11 @@ pipeline {
             }
             steps {
                 sh "echo Deploying..."
-                sh "sleep 10"
+                sh """
+                docker rm -f vat-calculator || docker ps
+                docker run -d -p 3000:3000 --name vat-calculator ${registry}:${env.BUILD_NUMBER}
+                docker inspect vat-calculator
+                """
             }
         }
     }
